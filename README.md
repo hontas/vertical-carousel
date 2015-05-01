@@ -1,2 +1,3 @@
 # vertical-carousel
-for rss-feeds
+
+[Live demo](https://hontas.github.io/vertical-carousel)

@@ -1,0 +1,105 @@
+html {
+	box-sizing: border-box;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
+body {
+	font-family: sans-serif;
+	-webkit-font-smoothing: antialiased;
+  	-moz-osx-font-smoothing: grayscale;
+}
+
+.v-carousel--container {
+	background-color: #ededed;
+	border: 1px solid #ededed;
+	display: block;
+	position: relative;
+	overflow: hidden;
+	width: 315px;
+}
+
+.v-carousel--items-list {
+	margin: 0;
+	padding: 0;
+	-webkit-transition-property: transform;
+	transition-property: transform;
+	-webkit-transition-duration: 0.5s;
+  	transition-duration: 0.5s;
+  	-webkit-transform: translate3d(0px, 0px, 0px);
+  	transform: translate3d(0px, 0px, 0px);
+}
+
+
+.v-carousel--item {
+	background-color: #fff;
+	list-style-type: none;
+	margin-bottom: 0.5em;
+	min-height: 75px;
+}
+
+.v-carousel--item:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.v-carousel--img-container {
+	float: left;
+	width: 30%;
+	height: 75px;
+	overflow: hidden;
+}
+
+.v-carousel--img-container img {
+	border: 0;
+	height: 75px;
+}
+
+.v-carousel--body {
+	color: #333;
+	float: left;
+	margin: 0;
+	padding: 0 0.5em;
+	width: 70%;
+	overflow: hidden;
+  	max-height: 75px;
+}
+
+.v-carousel--body h2,
+.v-carousel--body p {
+	margin: 0;
+}
+
+.v-carousel--body h2 {
+	font-size: 1.125em;
+}
+
+.v-carousel--body p {
+	font-size: 0.8125em;
+}
+
+.v-carousel--direction-left,
+.v-carousel--direction-right {
+	top: calc(50% - 16px);
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	display: block;
+	background-color: rgba(0,0,0,0.6);
+	border-radius: 50%;
+	color: rgba(255, 255, 255, 0.75);
+	text-align: center;
+	font-size: 1.5em;
+	cursor: pointer;
+}
+
+.v-carousel--direction-left {
+	left: 1%;
+	text-indent: -0.1em;
+}
+.v-carousel--direction-right {
+	right: 1%;
+	text-indent: 0.1em;
+}
