@@ -79,6 +79,7 @@ window.rss = (function () {
 			var paragraph = P.cloneNode();
 
 			link.setAttribute("href", item.link);
+			title.classList.add(CLASS_NAME_PREFIX + "--item__title");
 			listItem.classList.add(CLASS_NAME_PREFIX + "--item");
 			itemBody.classList.add(CLASS_NAME_PREFIX + "--body");
 			imgContainer.classList.add(CLASS_NAME_PREFIX + "--img-container");

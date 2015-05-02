@@ -29,7 +29,7 @@ window.verticalCarousel = (function verticalCarousel() {
 		this.element = document.querySelector(this.options.selector);
 		this.itemsContainer = this.element.querySelector("." + CLASS_NAME_PREFIX + "--items-list");
 
-		var height = this.options.visibleItems * (ITEM_OUTER_HEIGHT) + CONTAINER_BORDER * 2;
+		var height = this.options.visibleItems * ITEM_OUTER_HEIGHT + (CONTAINER_BORDER * 2);
 		this.element.style.height = height + "px";
 
 		this.cloneElements();
@@ -65,7 +65,7 @@ window.verticalCarousel = (function verticalCarousel() {
 		this.element.appendChild(this.createControls());
 	};
 
-	Carousel.prototype.createControls = function createControls() {
+	Carousel.prototype.createControls = function() {
 		this.controlsContainer = DIV.cloneNode();
 		var dirContainer = DIV.cloneNode();
 		var prev = A.cloneNode();
@@ -96,8 +96,14 @@ window.verticalCarousel = (function verticalCarousel() {
 		return parseInt(currentOffset[1], 10);
 	};
 
-	Carousel.prototype.clickHandler = function clickHandler(e) {
-		var carousel = this,
+	Carousel.prototype.moveToPosition = function(pos) {
+		this.itemsContainer.style.transform = "translate3d(0px, " + pos + "px, 0px)";
+		this.itemsContainer.style.webkitTransform = "translate3d(0px, " + pos + "px, 0px)";
+	};
+
+	Carousel.prototype.clickHandler = function(e) {
+		var self = this,
+			carousel = this,
 			visibleItems = this.options.visibleItems,
 			itemsContainer = this.itemsContainer,
 			listHeight = itemsContainer.offsetHeight,
@@ -117,20 +123,15 @@ window.verticalCarousel = (function verticalCarousel() {
 				break;
 		}
 
-		function move(nextOffset) {
-			itemsContainer.style.transform = "translate3d(0px, " + nextOffset + "px, 0px)";
-			itemsContainer.style.webkitTransform = "translate3d(0px, " + nextOffset + "px, 0px)";
-		}
-
 		function next(nextOffset) {
-			move(nextOffset);
+			self.moveToPosition(nextOffset);
 			if (nextOffset - ITEM_OUTER_HEIGHT < bottomPosition) {
 				loop(-ITEM_OUTER_HEIGHT * visibleItems);
 			}
 		}
 
 		function previous(nextOffset) {
-			move(nextOffset);
+			self.moveToPosition(nextOffset);
 			if (currentOffset + ITEM_OUTER_HEIGHT * 2 > 0) {
 				loop(bottomPosition + ITEM_OUTER_HEIGHT * visibleItems);
 			}
@@ -146,7 +147,7 @@ window.verticalCarousel = (function verticalCarousel() {
 
 			setTimeout(function() {
 				setTransitionDuration(0);
-				move(nextOffset);
+				self.moveToPosition(nextOffset);
 				setTimeout(function() {
 					carousel.inTransition = false;
 					setTransitionDuration(TRANSITION_DURATION);
@@ -155,8 +156,38 @@ window.verticalCarousel = (function verticalCarousel() {
 		}
 	};
 
+	Carousel.prototype.handleTouchEvents = function(startEvt) {
+		var self = this;
+		var startY = startEvt.changedTouches[0].pageY;
+		var currentOffset = self.getCurrentOffset();
+
+		function getNextPos(evt) {
+			var currY = evt.changedTouches[0].pageY;
+			var delta = startY - currY;
+			return currentOffset - delta;
+		}
+
+		function handleMove(currEvt) {
+			currEvt.preventDefault();
+			self.moveToPosition(getNextPos(currEvt));
+		}
+
+		this.element.addEventListener("touchmove", handleMove);
+
+		this.element.addEventListener("touchend", function handleEnd(endEvt) {
+			var nextOffset = getNextPos(endEvt);
+			var nextPosition = Math.round(nextOffset / ITEM_OUTER_HEIGHT) * ITEM_OUTER_HEIGHT;
+
+			self.moveToPosition(nextPosition);
+
+			this.removeEventListener("touchmove", handleMove);
+			this.removeEventListener("touchend", handleEnd);
+		});
+	};
+
 	Carousel.prototype.addEventListeners = function addEventListeners() {
 		this.controlsContainer.addEventListener("click", this.clickHandler.bind(this));
+		this.element.addEventListener("touchstart", this.handleTouchEvents.bind(this));
 	};
 
 	return function(options) {

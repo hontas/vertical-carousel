@@ -24,10 +24,17 @@ body {
 	margin: 0;
 	padding: 0;
 	-webkit-transition-property: transform;
+	-moz-transition-property: transform;
+	-o-transition-property: transform;
 	transition-property: transform;
 	-webkit-transition-duration: 0.5s;
+	-moz-transition-duration: 0.5s;
+	-o-transition-duration: 0.5s;
   	transition-duration: 0.5s;
   	-webkit-transform: translate3d(0px, 0px, 0px);
+  	-moz-transform: translate3d(0px, 0px, 0px);
+  	-ms-transform: translate3d(0px, 0px, 0px);
+  	-o-transform: translate3d(0px, 0px, 0px);
   	transform: translate3d(0px, 0px, 0px);
 }
 
@@ -67,12 +74,12 @@ body {
   	max-height: 75px;
 }
 
-.v-carousel--body h2,
-.v-carousel--body p {
+.v-carousel--body p,
+.v-carousel--item__title {
 	margin: 0;
 }
 
-.v-carousel--body h2 {
+.v-carousel--item__title {
 	font-size: 1.125em;
 }
 
