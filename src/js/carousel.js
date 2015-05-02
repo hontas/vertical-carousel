@@ -1,4 +1,5 @@
-var verticalCarousel = (function () {
+window.verticalCarousel = (function verticalCarousel() {
+	"use strict";
 
 	var DIV = document.createElement("DIV");
 	var A = document.createElement("A");
@@ -7,16 +8,17 @@ var verticalCarousel = (function () {
 	var ITEM_MARGIN = 8;
 	var CONTAINER_BORDER = 1;
 	var ITEM_OUTER_HEIGHT = ITEM_HEIGHT + ITEM_MARGIN;
+	var TRANSITION_DURATION = 500;
 
 	function assert(predicate, message) {
 		if (predicate) {
-			throw(message);
+			throw new Error(message);
 		}
 	}
 
 	function clone(node) {
 		return node.cloneNode(true);
-	};
+	}
 
 	function Carousel(options) {
 		this.options = options;
@@ -25,7 +27,7 @@ var verticalCarousel = (function () {
 
 	Carousel.prototype.init = function init() {
 		this.element = document.querySelector(this.options.selector);
-		this.itemsContainer = this.element.querySelector('.' + CLASS_NAME_PREFIX + '--items-list');
+		this.itemsContainer = this.element.querySelector("." + CLASS_NAME_PREFIX + "--items-list");
 
 		var height = this.options.visibleItems * (ITEM_OUTER_HEIGHT) + CONTAINER_BORDER * 2;
 		this.element.style.height = height + "px";
@@ -34,7 +36,7 @@ var verticalCarousel = (function () {
 		this.appendControls();
 
 		this.addEventListeners();
-	}
+	};
 
 	Carousel.prototype.cloneElements = function() {
 		var container = clone(this.itemsContainer);
@@ -85,64 +87,71 @@ var verticalCarousel = (function () {
 		this.controlsContainer.appendChild(dirContainer);
 
 		return this.controlsContainer;
-	}
+	};
+
+	Carousel.prototype.getCurrentOffset = function() {
+		var transform = this.itemsContainer.style.transform;
+		// get offset like so: [x, y, z]
+		var currentOffset = transform.match(/([\-\d]+)px/g);
+		return parseInt(currentOffset[1], 10);
+	};
 
 	Carousel.prototype.clickHandler = function clickHandler(e) {
-		var offset = ITEM_OUTER_HEIGHT,
+		var carousel = this,
 			visibleItems = this.options.visibleItems,
 			itemsContainer = this.itemsContainer,
 			listHeight = itemsContainer.offsetHeight,
-			cssText = itemsContainer.style.cssText,
-			currentOffset = parseInt(cssText.substring(cssText.indexOf(',') + 2, cssText.lastIndexOf(',') - 2), 10) || 0,
-			bottomPosition = offset * visibleItems - listHeight - ITEM_MARGIN,
-			nextOffset;
+			currentOffset = this.getCurrentOffset(),
+			bottomPosition = ITEM_OUTER_HEIGHT * visibleItems - listHeight - ITEM_MARGIN;
 
-		function updateSliderOffset(nextOffset) {
+		if (carousel.inTransition) {
+			return;
+		}
+
+		switch (e.target.rel) {
+			case "next":
+				next(currentOffset - ITEM_OUTER_HEIGHT);
+				break;
+			case "prev":
+				previous(currentOffset + ITEM_OUTER_HEIGHT);
+				break;
+		}
+
+		function move(nextOffset) {
 			itemsContainer.style.transform = "translate3d(0px, " + nextOffset + "px, 0px)";
 			itemsContainer.style.webkitTransform = "translate3d(0px, " + nextOffset + "px, 0px)";
 		}
 
-		function updateTransitionDuration(duration) {
-			itemsContainer.style.transitionDuration = duration;
-		}
-
-		function loop(nextOffset, cb) {
-			updateTransitionDuration("0s");
-			updateSliderOffset(nextOffset);
-			setTimeout(function() {
-				cb(nextOffset);
-			}, 1);
-		}
-
-		function next(nextOffset, cb) {
-			if (nextOffset < bottomPosition) {
-				loop(-offset * visibleItems, function(nextOffset) {
-					next(nextOffset - offset);
-				});
-			} else {
-				updateTransitionDuration("0.5s");
-				updateSliderOffset(nextOffset);
+		function next(nextOffset) {
+			move(nextOffset);
+			if (nextOffset - ITEM_OUTER_HEIGHT < bottomPosition) {
+				loop(-ITEM_OUTER_HEIGHT * visibleItems);
 			}
 		}
 
 		function previous(nextOffset) {
-			if (nextOffset > 0) { // loop around
-				loop(bottomPosition + offset * 2, function(nextOffset) {
-					previous(nextOffset + offset);
-				});
-			} else {
-				updateTransitionDuration("0.5s");
-				updateSliderOffset(nextOffset);
+			move(nextOffset);
+			if (currentOffset + ITEM_OUTER_HEIGHT * 2 > 0) {
+				loop(bottomPosition + ITEM_OUTER_HEIGHT * visibleItems);
 			}
 		}
 
-		switch (e.target.rel) {
-			case 'next':
-				next(currentOffset - offset);
-				break;
-			case 'prev':
-				previous(currentOffset + offset);
-				break;
+		function setTransitionDuration(duration) {
+			itemsContainer.style.transitionDuration = duration + "ms";
+			itemsContainer.style.webkitTransitionDuration = duration + "ms";
+		}
+
+		function loop(nextOffset) {
+			carousel.inTransition = true;
+
+			setTimeout(function() {
+				setTransitionDuration(0);
+				move(nextOffset);
+				setTimeout(function() {
+					carousel.inTransition = false;
+					setTransitionDuration(TRANSITION_DURATION);
+				}, 1);
+			}, TRANSITION_DURATION + 100);
 		}
 	};
 

@@ -1,4 +1,6 @@
-var rss = (function () {
+window.rss = (function () {
+	"use strict";
+
 	var ARTICLE = document.createElement("ARTICLE");
 	var IMG = document.createElement("IMG");
 	var DIV = document.createElement("DIV");
@@ -35,7 +37,7 @@ var rss = (function () {
 			var url = this.options.url;
 			var limit = this.options.limit || 10;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function(resolve) {
 				var feed = new google.feeds.Feed(url);
 				feed.setNumEntries(limit);
 				feed.load(resolve);
@@ -76,7 +78,7 @@ var rss = (function () {
 			var title = H2.cloneNode();
 			var paragraph = P.cloneNode();
 
-			link.setAttribute('href', item.link);
+			link.setAttribute("href", item.link);
 			listItem.classList.add(CLASS_NAME_PREFIX + "--item");
 			itemBody.classList.add(CLASS_NAME_PREFIX + "--body");
 			imgContainer.classList.add(CLASS_NAME_PREFIX + "--img-container");
@@ -99,7 +101,7 @@ var rss = (function () {
 
 		appendToDom: function(fragment) {
 			var target = document.querySelector(this.options.selector);
-			target.classList.add(CLASS_NAME_PREFIX + '--container');
+			target.classList.add(CLASS_NAME_PREFIX + "--container");
 			target.appendChild(fragment);
 			return fragment;
 		}
@@ -107,6 +109,10 @@ var rss = (function () {
 
 	assert(!window.google || !window.google.load, "Dependancy google jsapi missing");
 
+	/*
+	 * Create a Promise that
+	 * resolves when google feeds API has loaded
+	 */
 	var googleFeedApiPromise = new Promise(function(resolve) {
 		google.load("feeds", "1");
 		google.setOnLoadCallback(resolve);
