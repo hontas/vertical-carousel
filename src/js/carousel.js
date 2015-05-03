@@ -6,9 +6,13 @@ window.verticalCarousel = (function verticalCarousel() {
 	var CLASS_NAME_PREFIX = "v-carousel";
 	var ITEM_HEIGHT = 75;
 	var ITEM_MARGIN = 8;
-	var CONTAINER_BORDER = 1;
+	var CONTAINER_BORDER = 2;
 	var ITEM_OUTER_HEIGHT = ITEM_HEIGHT + ITEM_MARGIN;
-	var TRANSITION_DURATION = 500;
+
+	var defaults = {
+		visibleItems: 2,
+		transitionDuration: 500
+	};
 
 	function assert(predicate, message) {
 		if (predicate) {
@@ -20,8 +24,26 @@ window.verticalCarousel = (function verticalCarousel() {
 		return node.cloneNode(true);
 	}
 
+	function getOptions(options) {
+		var ret = {},
+			optProp,
+			defProp;
+
+		for(optProp in options) {
+			ret[optProp] = options[optProp];
+		}
+
+		for(defProp in defaults) {
+			if (ret[defProp] === undefined) {
+				ret[defProp] = defaults[defProp];
+			}
+		}
+
+		return ret;
+	}
+
 	function Carousel(options) {
-		this.options = options;
+		this.options = getOptions(options);
 		this.init();
 	}
 
@@ -29,7 +51,7 @@ window.verticalCarousel = (function verticalCarousel() {
 		this.element = document.querySelector(this.options.selector);
 		this.itemsContainer = this.element.querySelector("." + CLASS_NAME_PREFIX + "--items-list");
 
-		var height = this.options.visibleItems * ITEM_OUTER_HEIGHT + (CONTAINER_BORDER * 2);
+		var height = this.options.visibleItems * ITEM_OUTER_HEIGHT + CONTAINER_BORDER;
 		this.element.style.height = height + "px";
 
 		this.cloneElements();
@@ -150,9 +172,9 @@ window.verticalCarousel = (function verticalCarousel() {
 				self.moveToPosition(nextOffset);
 				setTimeout(function() {
 					carousel.inTransition = false;
-					setTransitionDuration(TRANSITION_DURATION);
+					setTransitionDuration(self.options.transitionDuration);
 				}, 1);
-			}, TRANSITION_DURATION + 100);
+			}, self.options.transitionDuration + 100);
 		}
 	};
 

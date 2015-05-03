@@ -1,23 +1,25 @@
+/* global rss, verticalCarousel*/
 window.addEventListener("DOMContentLoaded", function domLoaded() {
+	"use strict";
+
 	rss({
-		url: 'http://www.aftonbladet.se/rss.xml',
-		selector: '#carousel_one',
+		url: "http://www.aftonbladet.se/rss.xml",
+		selector: "#carousel_one",
 		limit: 10
 	})
 	.then(function() {
 		verticalCarousel({
-			selector: '#carousel_one',
-			visibleItems: 2
+			selector: "#carousel_one"
 		});
-	})
+	});
 
 	rss({
-		url: 'http://www.aftonbladet.se/kultur/rss.xml',
-		selector: '#carousel_two',
+		url: "http://www.aftonbladet.se/kultur/rss.xml",
+		selector: "#carousel_two",
 		limit: 3
 	}).then(function() {
 		verticalCarousel({
-			selector: '#carousel_two',
+			selector: "#carousel_two",
 			visibleItems: 3
 		});
 	});
