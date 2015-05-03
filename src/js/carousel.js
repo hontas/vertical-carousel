@@ -123,6 +123,7 @@ window.verticalCarousel = (function verticalCarousel() {
 				break;
 		}
 
+
 		function next(nextOffset) {
 			self.moveToPosition(nextOffset);
 			if (nextOffset - ITEM_OUTER_HEIGHT < bottomPosition) {
