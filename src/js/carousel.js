@@ -56,8 +56,8 @@ window.verticalCarousel = (function verticalCarousel() {
 
 		this.cloneElements();
 		this.appendControls();
-
 		this.addEventListeners();
+		this.setTransitionDuration(this.options.transitionDuration);
 	};
 
 	Carousel.prototype.cloneElements = function() {
@@ -77,10 +77,7 @@ window.verticalCarousel = (function verticalCarousel() {
 		this.element.replaceChild(container, this.itemsContainer);
 		this.itemsContainer = container; // update reference to container element
 
-		// set base position
-		var basePosition = -visibleItems * (ITEM_OUTER_HEIGHT);
-		this.itemsContainer.style.transform = "translate3d(0px, " + basePosition + "px, 0px)";
-		this.itemsContainer.style.webkitTransform = "translate3d(0px, " + basePosition + "px, 0px)";
+		this.moveToPosition(-visibleItems * ITEM_OUTER_HEIGHT);
 	};
 
 	Carousel.prototype.appendControls = function() {
@@ -123,6 +120,14 @@ window.verticalCarousel = (function verticalCarousel() {
 		this.itemsContainer.style.webkitTransform = "translate3d(0px, " + pos + "px, 0px)";
 	};
 
+	Carousel.prototype.setTransitionDuration = function(duration) {
+		assert(duration === undefined, "Must supply duration");
+		assert(typeof duration !== "number", "Duration must be a number");
+
+		this.itemsContainer.style.transitionDuration = duration + "ms";
+		this.itemsContainer.style.webkitTransitionDuration = duration + "ms";
+	};
+
 	Carousel.prototype.clickHandler = function(e) {
 		var self = this,
 			carousel = this,
@@ -159,20 +164,15 @@ window.verticalCarousel = (function verticalCarousel() {
 			}
 		}
 
-		function setTransitionDuration(duration) {
-			itemsContainer.style.transitionDuration = duration + "ms";
-			itemsContainer.style.webkitTransitionDuration = duration + "ms";
-		}
-
 		function loop(nextOffset) {
 			carousel.inTransition = true;
 
 			setTimeout(function() {
-				setTransitionDuration(0);
+				self.setTransitionDuration(0);
 				self.moveToPosition(nextOffset);
 				setTimeout(function() {
 					carousel.inTransition = false;
-					setTransitionDuration(self.options.transitionDuration);
+					self.setTransitionDuration(self.options.transitionDuration);
 				}, 1);
 			}, self.options.transitionDuration + 100);
 		}

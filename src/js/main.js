@@ -9,7 +9,8 @@ window.addEventListener("DOMContentLoaded", function domLoaded() {
 	})
 	.then(function() {
 		verticalCarousel({
-			selector: "#carousel_one"
+			selector: "#carousel_one",
+			transitionDuration: 200
 		});
 	});
 
