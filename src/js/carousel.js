@@ -116,6 +116,9 @@ window.verticalCarousel = (function verticalCarousel() {
 	};
 
 	Carousel.prototype.moveToPosition = function(pos) {
+		assert(pos === undefined, "Must supply position");
+		assert(typeof pos !== "number", "Position must be a number");
+
 		this.itemsContainer.style.transform = "translate3d(0px, " + pos + "px, 0px)";
 		this.itemsContainer.style.webkitTransform = "translate3d(0px, " + pos + "px, 0px)";
 	};
