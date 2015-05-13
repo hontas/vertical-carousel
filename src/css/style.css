@@ -23,9 +23,10 @@ body {
 .v-carousel--items-list {
 	margin: 0;
 	padding: 0;
-	-webkit-transition-property: transform;
-	-moz-transition-property: transform;
-	-o-transition-property: transform;
+	-webkit-transition-property: -webkit-transform;
+	-moz-transition-property: -moz-transform;
+	-ms-transition-property: -ms-transform;
+	-o-transition-property: -o-transform;
 	transition-property: transform;
 	-webkit-transition-duration: 0.5s;
 	-moz-transition-duration: 0.5s;

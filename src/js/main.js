@@ -1,4 +1,4 @@
-/* global rss, verticalCarousel*/
+/* global rss, verticalCarousel, rssSlider */
 window.addEventListener("DOMContentLoaded", function domLoaded() {
 	"use strict";
 
@@ -24,4 +24,9 @@ window.addEventListener("DOMContentLoaded", function domLoaded() {
 			visibleItems: 3
 		});
 	});
+
+	// rssSlider({
+	// 	feedUrl: "http://aftonbladet.se/rss.xml",
+	// 	selector: "#carousel_three"
+	// });
 });
